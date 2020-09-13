@@ -4,7 +4,7 @@ using StockingController;
 
 namespace StockingController.App
 {
-    class TimedCompression : ICompressionCtrl, ITimer
+    class TimedCompression : ICompressionCtrl, ITimer, ILED, IVibrator
     {
         enum StockingState
         {
@@ -13,15 +13,20 @@ namespace StockingController.App
         }
 
         private StockingState _stockingState = StockingState.Relaxed;
+
         public void Compress()
         {
             if (_stockingState == StockingState.Relaxed)
             {
                 Console.WriteLine("Compressing");
+                TurnLEDOn("green");
+                Vibrate();
                 StartTimer(5000);
                 _stockingState = StockingState.Compressed;
             }
             Console.WriteLine("Compressing finished");
+            TurnLEDOff("green");
+            Console.WriteLine();
         }
 
         public void Decompress()
@@ -29,15 +34,58 @@ namespace StockingController.App
             if (_stockingState == StockingState.Compressed)
             {
                 Console.WriteLine("Decompressing");
+                TurnLEDOn("red");
+                Vibrate();
                 StartTimer(2000);
                 _stockingState = StockingState.Relaxed;
             }
             Console.WriteLine("Decompressing finished");
+            TurnLEDOff("red");
+            Console.WriteLine();
         }
 
         public void StartTimer(int time)
         {
             Thread.Sleep(time);
+        }
+
+        public void TurnLEDOn(string color)
+        {
+            switch (color.ToLower())
+            {
+                case "green":
+                    Console.WriteLine("GREEN LED ON");
+                    break;
+
+                case "red":
+                    Console.WriteLine("RED LED ON");
+                    break;
+
+                default:
+                    break;
+            }
+        }
+
+        public void TurnLEDOff(string color)
+        {
+            switch (color)
+            {
+                case "green":
+                    Console.WriteLine("GREEN LED OFF");
+                    break;
+
+                case "red":
+                    Console.WriteLine("RED LED OFF");
+                    break;
+
+                default:
+                    break;
+            }
+        }
+
+        public void Vibrate()
+        {
+            Console.WriteLine("Wruum Wruum");
         }
     }
     class Program
